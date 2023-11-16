@@ -8,7 +8,7 @@ This file is meant as a guide to get it working, containing an inventory, instal
 
 Author: 	Jacco Terwel
 email:		terwelj@tcd.ie
-Last modified:	13-11-23
+Last modified:	16-11-23
 
 
 =====================
@@ -41,6 +41,8 @@ run_daily_check.sh	(bash script):		Automated script to check one of the lists in
 						Usage: ./run_dily_check.sh
 run_manually.sh		(bash script):		Script to run the programs on a specific set of objects, to be used for manual checks. May be adapted to specific cases without breaking the automated one
 						Usage: ./run_manually.sh
+list_creator_updater.ipynb (jupyter notebook):	Notebook for creating / updatings the source lists in a consistent manner
+check_lcs.ipynb		(jupyter notebook):	Simple notebook to check light curves and binning program results. Has some basic functions for reading the files and plotting light curves and bins
 
 
 ========================
@@ -78,6 +80,11 @@ run_manually.sh		(bash script):		Script to run the programs on a specific set of
 		>> lc
 		- If mongodb isn't set up properly the 2nd line will faill
 		- If everything works correctly, the last line should return a DataFrame of >=4029 rows and 47 columns
+- Open auto_check.py and add the following details:
+	- Recepients (line 38)
+	- Bot email address (line 94)
+	- Bot email password (line 95)
+	Note: if Bot email is not gmail, mailserver & mailport (lines 90 & 91) should be updated as well
 
 
 =========================
@@ -104,7 +111,7 @@ systemLog:
 	- Create the directories that do not exist yet (GitHub doesn't like empty folders, making this step necessary. See the contents for what is needed)
 	- Update config.csv to your requirements
 	- Make sure fpbot and ztfquery work properly (see installation guide above)
-	- Set the email address details from which to send the result email (auto_ceck.py, lines 94 & 95) (or disable email completely)
+	- Set the email address details from which to send the result email (auto_ceck.py, see installation guide) (or disable email completely)
 		- NOTE: When using e.g. a Gmail account for this, 2-step verification needs to be enabled before a token can be created to allow 3rd party programs like python to use it
 	- Set the recepient list (auto_check.py, line 38)
 	- (Optionally) run the programs on testlist.csv to make sure everything works

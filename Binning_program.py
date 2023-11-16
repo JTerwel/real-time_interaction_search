@@ -2,7 +2,7 @@
 A program to stack and display late-time observations from the ZTF SN Ia dataset
 
 Author: Jacco Terwel
-Date: 24-10-23
+Date: 16-11-23
 
 Added:
 	- Adapted to work for the real-time search (based on fpbot version, but different in/output)
@@ -102,9 +102,6 @@ def main():
 				save_lc_and_bins, [datafiles[_], fields]] for _ in range(len(datafiles.lcs))]
 		nr_files = len(datafiles.lcs)
 	elif mode == modes[3]:
-		if save_lc_and_bins:
-			print('Cant save lc and bins in real_time mode, setting it to False')
-			save_lc_and_bins = False
 		args = [[f, refmags, saveloc, late_time, zp_rcid, cuts, base_gap, mode, binsizes, phases,
 				 method, earliest_tail_fit_start, verdict_sigma, tail_fit_chi2dof_tresh,
 				 save_lc_and_bins] for f in datafiles]

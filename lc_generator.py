@@ -2,7 +2,7 @@
 A program to download all available ZTF observations of a set of objects and perform forced photometry on them
 
 Author: Jacco Terwel
-Date: 13-11-23
+Date: 16-11-23
 
 Added:
 	- Main structure and functions
@@ -54,7 +54,7 @@ def gen_lcs(listloc, lc_dir, nprocess_download, nprocess_fit):
 	blacklist = pd.read_csv('blacklist.csv', comment='#')
 	# For each object, check if new images have become available since last time
 	# If so, run the fpbot pipeline on that object and create a light curve
-	for i in range(len(objs)): # Possible to do this with multiprocessing as well or the download clog up?
+	for i in range(len(objs)):
 		if objs.ztfname.loc[i] in blacklist.ztfname.values: #skip blacklisted objects
 			continue
 		try:
@@ -64,15 +64,16 @@ def gen_lcs(listloc, lc_dir, nprocess_download, nprocess_fit):
 			else:
 				lc_loc = None
 			# Generate the light curve
-			nr_files, download_time = run_fpbot(objs.ztfname.loc[i], objs.ra.loc[i], objs.dec.loc[i],
-												objs.last_checked_nr.loc[i], lc_loc, lc_dir,
-												nprocess_download, nprocess_fit)
+			nr_files, download_time, new_data = run_fpbot(objs.ztfname.loc[i], objs.ra.loc[i],
+														  objs.dec.loc[i], objs.last_checked_nr.loc[i],
+														  lc_loc, lc_dir, nprocess_download, nprocess_fit)
 			# Update last checked mjd and nr
 			objs.loc[i, 'last_checked_mjd'] = download_time
 			objs.loc[i, 'last_checked_nr'] = nr_files
-			lcs_generated += 1
+			if new_data:
+				lcs_generated += 1
 		except: #Make a note of the error and continue with the next object
-			notes += f'\n\nSomething went wrong with {objs.ztfname.loc[i]}, this is the error traceback:\n'.join(traceback.format_stack())
+			notes += f'\n\nSomething went wrong with {objs.ztfname.loc[i]}, this is the error traceback:\n' + traceback.format_exc()
 			notes += '\n\n'
 			continue
 	# Save the notes
@@ -118,7 +119,6 @@ def run_fpbot(name, ra, dec, last_checked_nr, lc_loc, lc_dir, nprocess_download,
 	- ra  (float): Object RA
 	- dec (float): Object Dec
 	'''
-	#Need to play with nprocesses		###
 	pl = ForcedPhotometryPipeline(file_or_name=name, ra=ra, dec=dec, nprocess=nprocess_fit, ampel=False)
 	#Add custom download function to use
 	pl.new_download_function = new_download_function
@@ -127,7 +127,7 @@ def run_fpbot(name, ra, dec, last_checked_nr, lc_loc, lc_dir, nprocess_download,
 	pl.new_psffit_function = new_psffit_function
 	pl.new_psffit_function(pl, lc_loc)
 	if lc_loc is not None:
-		# Add old and new lc together (header is lost, but I don't really care for it)
+		# Add old and new lc together
 		lc_old = pd.read_csv(lc_loc, header=0, comment='#')
 		try:
 			lc_new = pd.read_csv(FORCEPHOTODATA/(name+'.csv'), header=0, comment='#')
@@ -136,12 +136,17 @@ def run_fpbot(name, ra, dec, last_checked_nr, lc_loc, lc_dir, nprocess_download,
 			lc = lc.loc[~lc.duplicated(subset='filename', keep='first'), :]
 			print(f'Old lc has {len(lc_old)} lines, new lc has {len(lc_new)} lines, combined lc has {len(lc)} lines, the rest were duplicates')
 			lc.to_csv(lc_loc, index=False)
+			if len(lc_old) < len(lc):
+				new_data = True
+			else:
+				new_data = False
 		except:
 			print(f'No new light curve was made for {name}')
 	else:
 		# Move lc to storage location
 		shutil.move(FORCEPHOTODATA/(name+'.csv'), lc_dir/(name+'.csv'))
-	return nr_files, download_time
+		new_data = True
+	return nr_files, download_time, new_data
 
 def new_download_function(self, last_checked_nr, lc_loc, no_local_check=False, nprocess_filecounts=16,
 						  nprocess_download=32):
@@ -333,6 +338,6 @@ def new_psffit_function(self, lc_loc, nprocess=None, force_refit=False):
 
 if (__name__ == "__main__"):
 	try:
-		gen_lcs(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+		gen_lcs(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]))
 	except:
 		gen_lcs(sys.argv[1], sys.argv[2], 32, 32)

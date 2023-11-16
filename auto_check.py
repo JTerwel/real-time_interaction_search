@@ -2,7 +2,7 @@
 A program to check the binning program output for interesting transients and send the results by email
 
 Author: Jacco Terwel
-Date: 24-10-23
+Date: 16-11-23
 
 Added:
 	- Main structure and functions
@@ -37,7 +37,7 @@ def run_check(mode, tresh_dets, tresh_final_bins, recent):
 	nr_old_dets, nr_active = check_fv(tresh_dets, tresh_final_bins, recent)
 	# Send email or save in backup if the email fails
 	try:
-		for recepient in ['terwelj@tcd.ie']: # Might want to have recepients depending on what is being run (config file?)
+		for recepient in []: # Might want to have recepients depending on what is being run (config file?)
 			send_email(recepient, nr_old_dets, nr_active)
 			# In manual mode, only send an email to the 1st person in the list
 			if mode == 'manual':
@@ -94,8 +94,8 @@ def send_email(recepient, nr_old_dets, nr_active): #Need to test if sending to m
 	mailserver = "smtp.gmail.com"
 	mailport = 587
 	# Specify login details
-	send_from = 'latetimesearcher@gmail.com'
-	password = 'lotv hbcy youh dzoo'
+	send_from = ''
+	password = ''
 	# Specify email
 	subject = f'real-time late-time CSM interaction search results {date.today()}'
 	text = f"The light curves have been generated, and the late-time observations have been binned.\nPlease check notes.txt to see the used list, number of objects queried, and any possible issues tht came up.\n{nr_active} objects that are currently active with late-time detections have been found, they are listed in currently_active.csv\n{nr_old_dets} objects with late-time detections that have already faded away again have been found, they are listed in old_dets.csv\nLet's see what we can find next time.\n\nCheers\n\nYour friendly neighbourhood robot"
