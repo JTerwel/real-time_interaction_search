@@ -398,6 +398,9 @@ class ztf_object:
 		#Rename problematic columns
 		self.lc.rename(columns={'filter':'obs_filter', 'Fratio.err':'Fratio_err',
 						   		'ampl.err':'ampl_err', 'sigma.err':'sigma_err'}, inplace=True)
+		if len(self.lc) == 0: #lc turns out to be empty --> No use in trying to do any of the following steps
+			self.peak_mjd = 0
+			return
 		# Update the filter entries for consistency.
 		self.lc.loc[self.lc.obs_filter == 'ZTF g', 'obs_filter'] = 'ztfg'
 		self.lc.loc[self.lc.obs_filter == 'ZTF r', 'obs_filter'] = 'ztfr'
