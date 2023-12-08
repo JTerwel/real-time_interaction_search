@@ -142,6 +142,7 @@ def run_fpbot(name, ra, dec, last_checked_nr, lc_loc, lc_dir, nprocess_download,
 				new_data = False
 		except:
 			print(f'No new light curve was made for {name}')
+			new_data = False
 	else:
 		# Move lc to storage location
 		shutil.move(FORCEPHOTODATA/(name+'.csv'), lc_dir/(name+'.csv'))
