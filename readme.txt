@@ -64,7 +64,7 @@ check_lcs.ipynb		(jupyter notebook):	Simple notebook to check light curves and b
 - Start a python instance to set the final things and make sure mongodb is set up correctly:
 	- import ztfquery and query a location:
 		>> from ztfquery import query
-		>> q = query.Query()
+		>> q = query.ZTFQuery()
 		>> q.load_metadata(radec=[7.1178554, 48.8587525], size=0.01, sql_query='obsjd BETWEEN 2458000 AND 2462000')
 		>> q.metatable
 		- As this is the first time, you will be asked for your irsa credentials when running the 2nd line
@@ -78,7 +78,7 @@ check_lcs.ipynb		(jupyter notebook):	Simple notebook to check light curves and b
 		>> import pandas as pd
 		>> lc = pd.read_csv('<Whatever $ZTFDATA was>forcephotometry/ZTF20abqetet.csv', header=0, comment='#')
 		>> lc
-		- If mongodb isn't set up properly the 2nd line will faill
+		- If mongodb isn't set up properly the 2nd line will fail
 		- If everything works correctly, the last line should return a DataFrame of >=4029 rows and 47 columns
 - Open auto_check.py and add the following details:
 	- Recepients (line 38)
