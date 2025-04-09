@@ -19,6 +19,7 @@ A few notebooks are included as well:
 Finally, a couple of handy files:
 - **readme.txt**: A simple text file containing the details of all files in the directory, as well as an installation and use guide. There are a couple of particularities for installing [ztfquery](https://github.com/MickaelRigault/ztfquery/tree/master) and [fpbot](https://github.com/simeonreusch/fpbot/tree/main) correctly. Please refer to their installation guides to solve any problems encountered.
 - **testlist.csv**: A small list of 16 ZTF objects used to test the program. If everything works properly, 7 of these should be found to have late-time detections with public IRSA access (see below) when using the default settings. (Possibly more if a signal is observed in data that bcame publicly available after writing this.)
+- **objects.csv**: The full list of objects that was used in the real-time monitoring campaign (paper link to be added once its out)
 
 [ztfquery](https://github.com/MickaelRigault/ztfquery/tree/master) requires an IPAC/IRSA account to download the image cutouts. Depending on the type of access your account has, you might be able to retrieve a different amount of images.
 
